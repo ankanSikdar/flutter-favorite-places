@@ -21,6 +21,9 @@ class _ImageInputState extends State<ImageInput> {
       source: ImageSource.gallery, // Change to Camera Later
       maxWidth: 600,
     );
+    if (image == null) {
+      return;
+    }
     setState(() {
       _storedImage = File(image.path);
     });
