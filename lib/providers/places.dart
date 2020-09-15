@@ -11,11 +11,14 @@ class Places extends ChangeNotifier {
   }
 
   void addPlace(String title, File pickedImage) {
-    _items.add(Place(
-      id: DateTime.now().toIso8601String(),
-      title: title,
-      image: pickedImage,
-      location: null,
-    ));
+    _items.add(
+      Place(
+        id: DateTime.now().toIso8601String(),
+        title: title,
+        image: pickedImage,
+        location: null,
+      ),
+    );
+    notifyListeners();
   }
 }

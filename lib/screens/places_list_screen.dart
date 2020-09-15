@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:places_app/providers/places.dart';
 import 'package:places_app/screens/add_place_screen.dart';
+import 'package:provider/provider.dart';
 
 class PlacesListScreen extends StatelessWidget {
   static const routeName = '/places-list-screen';
@@ -19,8 +21,25 @@ class PlacesListScreen extends StatelessWidget {
           Navigator.pushNamed(context, AddPlaceScreen.routeName);
         },
       ),
-      body: Center(
-        child: CircularProgressIndicator(),
+      body: Consumer<Places>(
+        builder: (context, places, child) {
+          if (places.items.length == 0) {
+            return Center(
+              child: Text('No Places Added Yet!'),
+            );
+          }
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: FileImage(places.items[index].image),
+                ),
+                title: Text(places.items[index].title),
+              );
+            },
+            itemCount: places.items.length,
+          );
+        },
       ),
     );
   }

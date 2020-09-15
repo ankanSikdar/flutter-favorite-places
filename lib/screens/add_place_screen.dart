@@ -28,6 +28,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
       _titleInputController.text,
       _pickedImage,
     );
+    Navigator.pop(context);
   }
 
   @override
