@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
   @override
@@ -8,7 +8,15 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
-  File _storedImage;
+  PickedFile _storedImage;
+
+  Future<void> _pickImage() async {
+    _storedImage = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+    );
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +36,13 @@ class _ImageInputState extends State<ImageInput> {
               ? Text(
                   'No Image Chosen',
                 )
-              : Image.file(
-                  _storedImage,
+              : Image(
+                  image: FileImage(File(_storedImage.path)),
                   fit: BoxFit.fitWidth,
                 ),
         ),
         RaisedButton.icon(
-          onPressed: () {},
+          onPressed: _pickImage,
           icon: Icon(
             Icons.camera_enhance,
             color: Theme.of(context).iconTheme.color,
