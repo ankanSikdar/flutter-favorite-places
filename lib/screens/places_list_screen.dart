@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:places_app/screens/add_place_screen.dart';
 
 class PlacesListScreen extends StatelessWidget {
+  static const routeName = '/places-list-screen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,7 +15,9 @@ class PlacesListScreen extends StatelessWidget {
           Icons.add,
           color: Theme.of(context).iconTheme.color,
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, AddPlaceScreen.routeName);
+        },
       ),
       body: Center(
         child: CircularProgressIndicator(),
