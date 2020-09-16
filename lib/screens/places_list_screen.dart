@@ -21,23 +21,33 @@ class PlacesListScreen extends StatelessWidget {
           Navigator.pushNamed(context, AddPlaceScreen.routeName);
         },
       ),
-      body: Consumer<Places>(
-        builder: (context, places, child) {
-          if (places.items.length == 0) {
+      body: FutureBuilder(
+        future: Provider.of<Places>(context, listen: false).fetchAndSetPlaces(),
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Text('No Places Added Yet!'),
+              child: CircularProgressIndicator(),
             );
           }
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: FileImage(places.items[index].image),
-                ),
-                title: Text(places.items[index].title),
+          return Consumer<Places>(
+            builder: (_, places, child) {
+              if (places.items.length == 0) {
+                return Center(
+                  child: Text('No Places Added Yet!'),
+                );
+              }
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: FileImage(places.items[index].image),
+                    ),
+                    title: Text(places.items[index].title),
+                  );
+                },
+                itemCount: places.items.length,
               );
             },
-            itemCount: places.items.length,
           );
         },
       ),
