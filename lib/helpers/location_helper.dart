@@ -1,5 +1,6 @@
-const String APIKey =
-    'pk.eyJ1IjoiYW5rYW5zaWtkYXIiLCJhIjoiY2tmNWN0OW83MDd4azJxcW1wam8wMWwzaCJ9.7Nh7Ant_wS7Lc-uaYUzM7Q';
+import 'package:places_app/keys.dart';
+
+const String APIKey = API_KEY;
 
 class LocationHelper {
   static String generateLocationPreviewImage(
