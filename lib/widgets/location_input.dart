@@ -12,18 +12,22 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   String _previewImageUrl;
   LatLng _selectedLatLng;
+  String _address;
 
-  void _setImage() {
+  Future<void> _setImageAndAddress() async {
     final url = LocationHelper.generateLocationPreviewImage(
         latitude: _selectedLatLng.latitude,
         longitude: _selectedLatLng.longitude);
-    setState(() {
-      _previewImageUrl = url;
-    });
-    LocationHelper.getPlaceAddress(
+
+    final locationAddress = await LocationHelper.getPlaceAddress(
       latitude: _selectedLatLng.latitude,
       longitude: _selectedLatLng.longitude,
     );
+
+    setState(() {
+      _previewImageUrl = url;
+      _address = locationAddress;
+    });
   }
 
   Future<void> _getCurrentLocation() async {
@@ -31,7 +35,7 @@ class _LocationInputState extends State<LocationInput> {
     locationApi.changeSettings(accuracy: LocationAccuracy.high);
     final location = await locationApi.getLocation();
     _selectedLatLng = LatLng(location.latitude, location.longitude);
-    _setImage();
+    _setImageAndAddress();
   }
 
   @override
@@ -39,7 +43,7 @@ class _LocationInputState extends State<LocationInput> {
     return Column(
       children: [
         Container(
-          height: 200,
+          height: 220,
           width: double.infinity,
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -77,7 +81,7 @@ class _LocationInputState extends State<LocationInput> {
                     await Navigator.pushNamed(context, MapsScreen.routeName);
                 if (response != null) {
                   _selectedLatLng = response;
-                  _setImage();
+                  _setImageAndAddress();
                 }
               },
               icon: Icon(
@@ -91,7 +95,22 @@ class _LocationInputState extends State<LocationInput> {
               color: Theme.of(context).primaryColor,
             ),
           ],
-        )
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            _address == null
+                ? 'Address: No Place Selected!'
+                : 'Address: $_address',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ],
     );
   }
