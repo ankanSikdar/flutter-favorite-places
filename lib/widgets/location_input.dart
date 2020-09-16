@@ -20,6 +20,10 @@ class _LocationInputState extends State<LocationInput> {
     setState(() {
       _previewImageUrl = url;
     });
+    LocationHelper.getPlaceAddress(
+      latitude: _selectedLatLng.latitude,
+      longitude: _selectedLatLng.longitude,
+    );
   }
 
   Future<void> _getCurrentLocation() async {
