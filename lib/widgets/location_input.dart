@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:places_app/helpers/location_helper.dart';
+import 'package:places_app/screens/maps_screen.dart';
 
 class LocationInput extends StatefulWidget {
   @override
@@ -9,16 +11,23 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   String _previewImageUrl;
+  LatLng _selectedLatLng;
+
+  void _setImage() {
+    final url = LocationHelper.generateLocationPreviewImage(
+        latitude: _selectedLatLng.latitude,
+        longitude: _selectedLatLng.longitude);
+    setState(() {
+      _previewImageUrl = url;
+    });
+  }
 
   Future<void> _getCurrentLocation() async {
     final locationApi = Location.instance;
     locationApi.changeSettings(accuracy: LocationAccuracy.high);
     final location = await locationApi.getLocation();
-    final url = LocationHelper.generateLocationPreviewImage(
-        latitude: location.latitude, longitude: location.longitude);
-    setState(() {
-      _previewImageUrl = url;
-    });
+    _selectedLatLng = LatLng(location.latitude, location.longitude);
+    _setImage();
   }
 
   @override
@@ -59,7 +68,14 @@ class _LocationInputState extends State<LocationInput> {
               color: Theme.of(context).primaryColor,
             ),
             RaisedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                final response =
+                    await Navigator.pushNamed(context, MapsScreen.routeName);
+                if (response != null) {
+                  _selectedLatLng = response;
+                  _setImage();
+                }
+              },
               icon: Icon(
                 Icons.map,
                 color: Theme.of(context).iconTheme.color,
