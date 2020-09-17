@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:places_app/providers/places.dart';
 import 'package:places_app/screens/add_place_screen.dart';
+import 'package:places_app/widgets/places_item.dart';
 import 'package:provider/provider.dart';
 
 class PlacesListScreen extends StatelessWidget {
@@ -38,11 +39,10 @@ class PlacesListScreen extends StatelessWidget {
               }
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: FileImage(places.items[index].image),
-                    ),
-                    title: Text(places.items[index].title),
+                  return PlacesItem(
+                    image: places.items[index].image,
+                    title: places.items[index].title,
+                    address: places.items[index].location.address,
                   );
                 },
                 itemCount: places.items.length,
