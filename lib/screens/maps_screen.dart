@@ -12,6 +12,7 @@ class MapsScreen extends StatefulWidget {
 class _MapsScreenState extends State<MapsScreen> {
   MapboxMapController mapController;
   LatLng latLng;
+  LatLng _initialCoords;
 
   @override
   void dispose() {
@@ -21,6 +22,13 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(MapboxMapController controller) {
     mapController = controller;
+    if (_initialCoords != null) {
+      mapController.addCircle(CircleOptions(
+        geometry: LatLng(_initialCoords.latitude, _initialCoords.longitude),
+        circleRadius: 10,
+        circleColor: 'red',
+      ));
+    }
   }
 
   void _onLongPress(double latitude, double longitude) {
@@ -37,6 +45,8 @@ class _MapsScreenState extends State<MapsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _initialCoords = ModalRoute.of(context).settings.arguments as LatLng;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Choose a Location'),
@@ -45,19 +55,22 @@ class _MapsScreenState extends State<MapsScreen> {
         accessToken: API_KEY,
         styleString: MapboxStyles.SATELLITE_STREETS,
         initialCameraPosition: CameraPosition(
-          target: LatLng(
-            22.694825699179827,
-            88.44378066601621,
-          ),
+          target: _initialCoords == null
+              ? LatLng(
+                  22.694825699179827,
+                  88.44378066601621,
+                )
+              : _initialCoords,
           zoom: 16,
         ),
         onMapCreated: _onMapCreated,
         compassEnabled: true,
-        myLocationEnabled: true,
         myLocationRenderMode: MyLocationRenderMode.GPS,
-        onMapLongClick: (point, coordinates) {
-          _onLongPress(coordinates.latitude, coordinates.longitude);
-        },
+        onMapLongClick: _initialCoords == null
+            ? (point, coordinates) {
+                _onLongPress(coordinates.latitude, coordinates.longitude);
+              }
+            : null,
       ),
       floatingActionButton: latLng == null
           ? null
