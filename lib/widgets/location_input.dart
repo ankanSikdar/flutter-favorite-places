@@ -5,6 +5,9 @@ import 'package:places_app/helpers/location_helper.dart';
 import 'package:places_app/screens/maps_screen.dart';
 
 class LocationInput extends StatefulWidget {
+  final Function saveLocation;
+  LocationInput({this.saveLocation});
+
   @override
   _LocationInputState createState() => _LocationInputState();
 }
@@ -30,6 +33,11 @@ class _LocationInputState extends State<LocationInput> {
       _address = locationAddress;
       _isLoading = false;
     });
+    widget.saveLocation(
+      lat: _selectedLatLng.latitude,
+      long: _selectedLatLng.longitude,
+      address: _address,
+    );
   }
 
   Future<void> _getCurrentLocation() async {

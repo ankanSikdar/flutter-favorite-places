@@ -10,12 +10,13 @@ class Places extends ChangeNotifier {
     return [..._items];
   }
 
-  void addPlace(String title, File pickedImage) {
+  void addPlace(
+      String title, File pickedImage, PlaceLocation selectedLocation) {
     Place newPlace = Place(
       id: DateTime.now().toIso8601String(),
       title: title,
       image: pickedImage,
-      location: null,
+      location: selectedLocation,
     );
     _items.add(newPlace);
     notifyListeners();
@@ -25,6 +26,9 @@ class Places extends ChangeNotifier {
         'id': newPlace.id,
         'title': newPlace.title,
         'image': newPlace.image.path,
+        'loc_lat': newPlace.location.latitude,
+        'loc_long': newPlace.location.longitude,
+        'address': newPlace.location.address,
       },
     );
   }
@@ -36,7 +40,11 @@ class Places extends ChangeNotifier {
               id: element['id'],
               title: element['title'],
               image: File(element['image']),
-              location: null,
+              location: PlaceLocation(
+                latitude: element['loc_lat'],
+                longitude: element['loc_long'],
+                address: element['address'],
+              ),
             ))
         .toList();
     notifyListeners();
