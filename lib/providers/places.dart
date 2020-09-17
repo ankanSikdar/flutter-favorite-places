@@ -49,4 +49,8 @@ class Places extends ChangeNotifier {
         .toList();
     notifyListeners();
   }
+
+  Place getPlaceById(String id) {
+    return _items.firstWhere((element) => element.id == id);
+  }
 }

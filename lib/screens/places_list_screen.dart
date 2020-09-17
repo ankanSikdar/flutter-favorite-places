@@ -40,6 +40,7 @@ class PlacesListScreen extends StatelessWidget {
               return ListView.builder(
                 itemBuilder: (context, index) {
                   return PlacesItem(
+                    id: places.items[index].id,
                     image: places.items[index].image,
                     title: places.items[index].title,
                     address: places.items[index].location.address,
