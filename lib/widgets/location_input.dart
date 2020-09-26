@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -17,6 +18,28 @@ class _LocationInputState extends State<LocationInput> {
   LatLng _selectedLatLng;
   String _address;
   bool _isLoading = false;
+  bool _hasInternet = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkInternet();
+  }
+
+  Future<void> checkInternet() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          _hasInternet = true;
+        });
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        _hasInternet = false;
+      });
+    }
+  }
 
   Future<void> _setImageAndAddress() async {
     final url = LocationHelper.generateLocationPreviewImage(
@@ -41,6 +64,10 @@ class _LocationInputState extends State<LocationInput> {
   }
 
   Future<void> _getCurrentLocation() async {
+    await checkInternet();
+    if (!_hasInternet) {
+      return;
+    }
     setState(() {
       _isLoading = true;
     });
@@ -75,44 +102,63 @@ class _LocationInputState extends State<LocationInput> {
         SizedBox(
           height: 10,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            RaisedButton.icon(
-              onPressed: _isLoading ? null : _getCurrentLocation,
-              icon: Icon(
-                Icons.location_on,
-                color: Theme.of(context).iconTheme.color,
+        _hasInternet
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  RaisedButton.icon(
+                    onPressed: _isLoading ? null : _getCurrentLocation,
+                    icon: Icon(
+                      Icons.location_on,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    label: Text(
+                      'Current Location',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  RaisedButton.icon(
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            await checkInternet();
+                            if (!_hasInternet) {
+                              return;
+                            }
+                            final response = await Navigator.pushNamed(
+                                context, MapsScreen.routeName);
+                            if (response != null) {
+                              _selectedLatLng = response;
+                              _setImageAndAddress();
+                            }
+                          },
+                    icon: Icon(
+                      Icons.map,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    label: Text(
+                      'Choose on Map',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ],
+              )
+            : Center(
+                child: RaisedButton.icon(
+                  onPressed: checkInternet,
+                  icon: Icon(
+                    Icons.refresh,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  label: Text(
+                    'Check Internet Connection',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
-              label: Text(
-                'Current Location',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Theme.of(context).primaryColor,
-            ),
-            RaisedButton.icon(
-              onPressed: _isLoading
-                  ? null
-                  : () async {
-                      final response = await Navigator.pushNamed(
-                          context, MapsScreen.routeName);
-                      if (response != null) {
-                        _selectedLatLng = response;
-                        _setImageAndAddress();
-                      }
-                    },
-              icon: Icon(
-                Icons.map,
-                color: Theme.of(context).iconTheme.color,
-              ),
-              label: Text(
-                'Choose on Map',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Theme.of(context).primaryColor,
-            ),
-          ],
-        ),
         SizedBox(
           height: 10,
         ),
