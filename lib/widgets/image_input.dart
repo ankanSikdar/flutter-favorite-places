@@ -56,20 +56,31 @@ class _ImageInputState extends State<ImageInput> {
                   fit: BoxFit.fitWidth,
                 ),
         ),
-        RaisedButton.icon(
-          onPressed: _pickImage,
-          icon: Icon(
-            Icons.camera_enhance,
-            color: Theme.of(context).iconTheme.color,
-          ),
-          label: Text(
-            'Add a picture',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          color: Theme.of(context).primaryColor,
-        )
+        MediaQuery.of(context).size.width > 370
+            ? RaisedButton.icon(
+                onPressed: _pickImage,
+                icon: Icon(
+                  Icons.camera_enhance,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                label: Text(
+                  'Add a picture',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Theme.of(context).primaryColor,
+              )
+            : RaisedButton(
+                onPressed: _pickImage,
+                child: Text(
+                  'Add a picture',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Theme.of(context).primaryColor,
+              )
       ],
     );
   }

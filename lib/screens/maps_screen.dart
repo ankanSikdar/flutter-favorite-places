@@ -22,13 +22,14 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(MapboxMapController controller) {
     mapController = controller;
-    if (_initialCoords != null) {
-      mapController.addCircle(CircleOptions(
-        geometry: LatLng(_initialCoords.latitude, _initialCoords.longitude),
-        circleRadius: 10,
-        circleColor: 'red',
-      ));
-    }
+  }
+
+  _addInitialCircle() {
+    mapController.addCircle(CircleOptions(
+      geometry: LatLng(_initialCoords.latitude, _initialCoords.longitude),
+      circleRadius: 10,
+      circleColor: 'red',
+    ));
   }
 
   void _onLongPress(double latitude, double longitude) {
@@ -49,7 +50,9 @@ class _MapsScreenState extends State<MapsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose a Location'),
+        title: Text(_initialCoords == null
+            ? 'Choose a Location'
+            : 'Your chosen location'),
       ),
       body: MapboxMap(
         accessToken: API_KEY,
@@ -64,6 +67,8 @@ class _MapsScreenState extends State<MapsScreen> {
           zoom: 16,
         ),
         onMapCreated: _onMapCreated,
+        onStyleLoadedCallback:
+            _initialCoords != null ? _addInitialCircle : null,
         compassEnabled: true,
         myLocationRenderMode: MyLocationRenderMode.GPS,
         onMapLongClick: _initialCoords == null
