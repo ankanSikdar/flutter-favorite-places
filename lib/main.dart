@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:places_app/providers/places.dart';
 import 'package:places_app/screens/add_place_screen.dart';
 import 'package:places_app/screens/maps_screen.dart';
@@ -7,6 +8,9 @@ import 'package:places_app/screens/places_list_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(MyApp());
 }
 
