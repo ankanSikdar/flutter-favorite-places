@@ -1,4 +1,4 @@
-package com.example.places_app
+package com.ankansikdar.places_app
 
 import io.flutter.embedding.android.FlutterActivity
 
